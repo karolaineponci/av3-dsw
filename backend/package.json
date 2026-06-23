@@ -11,7 +11,7 @@
     "express": "^4.21.2",
     "firebase": "^12.15.0",
     "firebase-admin": "^14.0.0",
-    "mysql2": "^3.11.5"
+    "mysql2": "^3.22.5"
   },
   "module": "index.ts",
   "private": true,

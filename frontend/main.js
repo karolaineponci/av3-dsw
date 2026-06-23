@@ -21,6 +21,8 @@ const provider = new GoogleAuthProvider();
 // variável global para armazenar o usuário autenticado
 let user = null;
 
+let token = null;
+
 // autenticação tela de login
 const btnGoogle = document.querySelector('#GoogleBtn');
 
@@ -48,32 +50,29 @@ onAuthStateChanged(auth, async (user) => {
       return;
     }
 
-    // Mostra os dados do usuário na tela do CRUD
+    // Mostra os dados do usuário na tela do CRUD (Garante tratamento se a foto não carregar)
     const divUser = document.querySelector('#user');
     if (divUser) {
+      const fotoPerfil = user.photoURL ? user.photoURL : 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
       divUser.innerHTML = `
+        <img src="${fotoPerfil}" alt="Foto de ${user.displayName}" style="border-radius: 50%; width: 50px; height: 50px; margin-bottom: 10px;" onerror="this.src='https://cdn-icons-png.flaticon.com/512/149/149071.png'">
         <p><strong>Nome:</strong> ${user.displayName}</p>
         <p><strong>Email:</strong> ${user.email}</p>
       `;
     }
     
     try {
+      // Captura o Token correto do usuário logado
       token = await user.getIdToken(); 
-
-      const result = await fetch('http://localhost:3000/data', {
-          headers: { Authorization: `Bearer ${token}` }
-      });
-
-      const data = await result.json();
-      console.log("Dados recebidos do servidor:", data);
+      console.log("Token do usuário gerado com sucesso.");
         
-      // Só carrega a lista de livros se a tabela existir na página atual
+      // CORRIGIDO: Removeu o fetch para '/data' que causava o erro 404 e chama direto os livros
       if (tbody) {
         listarLivros();
       }
 
     } catch (error) {
-        console.error("Erro ao buscar dados do servidor:", error);
+        console.error("Erro ao processar autenticação do usuário:", error);
     }
 
   } else {
